@@ -1,0 +1,74 @@
+
+body{
+	background-color: #B4CFEC;
+}
+
+#taskWarning{
+	color: red;
+	display: none;
+	font-style: italic;
+	margin: 0;
+}
+
+#taskList{
+	background-color: #fff;
+	padding: 5px;
+	width: 500px;
+}
+
+#taskList ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+li{
+	padding: 10px;
+}
+
+li:nth-child(even){
+	background-color: #eee;
+}
+
+.Average{
+	color: black;
+	font-size: 18px;
+}
+
+.High{
+	color: red;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.Low{
+	color: green;
+	font-size: 18px;
+}
+
+.due{
+	display: block;
+	color: gray;
+	font-size: 14px;
+	font-style: italic;
+	text-align: right;
+}
+
+.complete .due{
+	color: white;
+}
+
+
+.completed{
+	float: right;
+}
+
+
+.complete{
+	background-color: #0066FF !important;
+	color: white;
+}
+
+.complete .completed{
+	display: none;
+}

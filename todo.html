@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+	<h1>My To-Do List</h1>
+	Your Name: <input type="text" name="yourName" id="yourName">*this field is here only to check local storage<br/>
+	<form>
+		<fieldset>
+			<legend>Enter a new event</legend>
+			Task Title: <input type="text" name="task" id="task"><br/>
+			<p id="taskWarning">Please enter a task name</p>
+			Due Date: <select name="date" id="date">
+				<option value="Today">Today</option>
+				<option value="Tomorrow">Tomorrow</option>
+				<option value="This Week">This Week</option>
+				<option value="Next Week">Next Week</option>
+				<option value="Whenever">Whenever</option>
+			</select><br/>
+			Priority: <input type="radio" name="priority" value="High">High
+			<input type="radio" name="priority" value="Average" checked='checked'>Average
+			<input type="radio" name="priority" value="Low">Low<br/>
+			<input type="reset" value="Add Event" id="submit">
+		</fieldset>
+	</form>
+	<div id="taskList">
+	</div>
+	<input type="button" value="Delete Task List" id="deleteAll">
+
+  <script src="js/todo.js"></script>
+</body>
+</html>
