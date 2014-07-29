@@ -64,7 +64,8 @@ function validate() { //activated by add event button
 	var taskName = task.value,
 		dueDate = dueDates.options[dueDates.selectedIndex].value,
 		dueIndex = dueDates.selectedIndex,
-		priority = document.querySelector('input[name = "priority"]:checked').value;
+		priority = document.querySelector('input[name = "priority"]:checked').value,
+		JString = JSON.stringify(taskListBig);
 	
 	db.setItem("yourStoredName", yourName.value); //testing out local storage
 	
@@ -76,7 +77,7 @@ function validate() { //activated by add event button
 
 	else {
 		taskWarning.style.display ="none";
-		var newItem = [];
+		var newItem = {};
 		newItem.name = taskName;
 		newItem.dueDate = dueDate;
 		newItem.dueIndex = dueIndex;
@@ -84,8 +85,9 @@ function validate() { //activated by add event button
 		newItem.status = "pending";
 		taskListBig.push(newItem);
 		updateList();
+		db.setItem("yourStoredTasks", JString);
 	}
-};
+}
 
 
 function removeItem(mouseEvent) {
@@ -119,10 +121,17 @@ function bindEvents(){
 };
 
 function setName(){
+	var taskListBigString = db.getItem("yourStoredTasks");
+	console.log(taskListBigString);
 	yourName.value = db.getItem("yourStoredName");
+
+	if (taskListBigString){
+	taskListBig = JSON.parse(taskListBigString);
+	console.dir(taskListBig);
+	}
 };
 
-window.onload= function() {
+window.onload = function() {
 	bindEvents();
 	setName();
 };
