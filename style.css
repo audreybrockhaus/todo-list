@@ -14,12 +14,7 @@ body{
 	background-color: #fff;
 	padding: 5px;
 	width: 500px;
-}
-
-#taskList ul{
 	list-style-type: none;
-	margin: 0;
-	padding: 0;
 }
 
 li{
@@ -30,18 +25,18 @@ li:nth-child(even){
 	background-color: #eee;
 }
 
-.Average{
+.Average h3{
 	color: black;
 	font-size: 18px;
 }
 
-.High{
+.High h3{
 	color: red;
 	font-weight: bold;
 	font-size: 18px;
 }
 
-.Low{
+.Low h3{
 	color: green;
 	font-size: 18px;
 }
@@ -72,3 +67,8 @@ li:nth-child(even){
 .complete .completed{
 	display: none;
 }
+
+.delete{
+
+}
+

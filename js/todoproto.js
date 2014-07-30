@@ -18,28 +18,28 @@ function validate(){
 	}
 	else{
 		taskWarning.style.display = "none";
-		addTask(createTask());
+		addTask(newItem());
 	}
 }
 
 function createTask (){
-	var newItem = {};
-		newItem.name = task.value;
-		newItem.dueDate = dueDates.options[dueDates.selectedIndex].value;
-		newItem.dueIndex = dueDates.selectedIndex;
-		newItem.priority = document.querySelector('input[name = "priority"]:checked').value;
-		newItem.status = "pending";
-	return newItem;
+	var el = new NewItem();
+		el.name = task.value;
+		el.dueDate = dueDates.options[dueDates.selectedIndex].value;
+		el.dueIndex = dueDates.selectedIndex;
+		el.priority = document.querySelector('input[name = "priority"]:checked').value;
+		el.status = "pending";
+	return el;
+}
+
+function NewItem(){
+	this.setEvents();
 }
 
 function addTask(newItem){
 		taskListBig.push(newItem);
-		updateLocal();
+		db.setItem("yourStoredTasks", JSON.stringify(taskListBig));
 		addNewItem(newItem);
-}
-
-function updateLocal(){
-	db.setItem("yourStoredTasks", JSON.stringify(taskListBig));
 }
 
 function addNewItem(thisTask){
@@ -56,38 +56,11 @@ function addNewItem(thisTask){
 	var thisNewDeleteButton =  document.createElement("button");
 	thisNewDeleteButton.innerHTML = "delete";
 	thisNewDeleteButton.className = "delete";
-	thisNewDeleteButton.addEventListener("click", deleteItem, false);
 	thisNewListItem.appendChild(thisNewDeleteButton);
 	var thisNewCompleteButton =  document.createElement("button");
 	thisNewCompleteButton.innerHTML = "Completed?";
 	thisNewCompleteButton.className = "completed";
-	thisNewCompleteButton.addEventListener("click", completeItem, false);
 	thisNewListItem.appendChild(thisNewCompleteButton);
-}
-
-function deleteItem (){
-	var node = this.parentNode,
-	siblings = node.parentNode.childNodes;
-
-	for (var i = 0; i <= siblings.length; i++) {
-		if (node == siblings[i]) {break;}
-	}
-	taskListBig.splice(i, 1);  
-	updateLocal();
-	node.remove();
-}
-
-function completeItem(){
-	var node = this.parentNode,
-		thisDate = node.getElementsByClassName("completed"),
-		siblings = node.parentNode.childNodes;
- 	for (var i = 0; i <= siblings.length; i++) {//loops through sibs until it finds correct index-better way to do this? 
-		if (node == siblings[i]) {break;}
-	}
-	taskListBig[i].dueDate = "Complete";
-	updateLocal();
-	thisDate.innerHTML = "Complete";
-	node.className = "complete";
 }
 
 function setItems(){ //this function fills in the list of stored tasks on page load
@@ -110,7 +83,8 @@ function setStoredInfo(){
 function deleteEverything(){
 	taskList.innerHTML = '';
 	taskListBig = [];
-	updateLocal();
+	db.setItem("yourStoredTasks", JSON.stringify(taskListBig));
+	db.setItem("yourStoredName", '');
 }
 
 function setUp() {
