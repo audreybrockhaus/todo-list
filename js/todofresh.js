@@ -33,9 +33,9 @@ function createTask (){
 }
 
 function addTask(newItem){
-		taskListBig.push(newItem);
-		updateLocal();
-		addNewItem(newItem);
+	taskListBig.push(newItem);
+	updateLocal();
+	addNewItem(newItem);
 }
 
 function updateLocal(){
@@ -66,15 +66,16 @@ function addNewItem(thisTask){
 }
 
 function deleteItem (){
-	var node = this.parentNode,
-	siblings = node.parentNode.childNodes;
-
-	for (var i = 0; i <= siblings.length; i++) {
-		if (node == siblings[i]) {break;}
+	var node = this.parentNode;
+	var nodeTitle = node.getElementsByTagName("h3");
+	var nodeName = nodeTitle.innerHTML;
+	console.log(nodeName);
+	
+	for (var i=0; i < taskListBig.length; i++) {
+		if (taskListBig[i].name === nodeName){
+			taskListBig.splice([i], 1);
+		}
 	}
-	taskListBig.splice(i, 1);  
-	updateLocal();
-	node.remove();
 }
 
 function completeItem(){
