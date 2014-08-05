@@ -19,11 +19,15 @@ function updateLocal(){
   db.setItem("yourStoredTasks", JSON.stringify(taskListBig));
 }
 
-function DeleteButton(){
-  this.element = null;
-  this.createElement();
-  this.setEvents();
-  return this.element;
+Task.prototype.createElement = function(){
+  var thisNewListTitle =  document.createElement("h3");
+  
+  this.element = document.createElement("li");
+  thisNewListTitle.innerHTML = this.name;
+  this.element.appendChild(thisNewListTitle);
+  this.element.appendChild(new DeleteButton); 
+  this.element.appendChild(new CompleteButton);
+  taskList.appendChild(this.element);
 }
 
 DeleteButton.prototype.createElement = function(){
@@ -51,13 +55,6 @@ DeleteButton.prototype.setEvents = function() {
   });
 }
 
-function CompleteButton(){
-  this.element = null;
-  this.createElement();
-  this.setEvents();
-  return this.element;
-}
-
 CompleteButton.prototype.createElement = function(){
   this.element = document.createElement("button");
   this.element.innerHTML = "complete?";
@@ -80,38 +77,20 @@ CompleteButton.prototype.setEvents = function() {
   });
 }
 
-function Task(){
-  this.name = task.value;
-  this.dueDate = dueDates.options[dueDates.selectedIndex].value;
-  this.status = "pending";
-  //taskListBig.push(this);
-  updateLocal();
-  console.dir(taskListBig);
-  this.createElement();
-  this.data = {
-
-  };
-}
-
-Task.prototype.createElement = function(){
-  var thisNewListTitle =  document.createElement("h3");
-  
-  this.element = document.createElement("li");
-  thisNewListTitle.innerHTML = task.value;
-  this.element.appendChild(thisNewListTitle);
-  this.element.appendChild(new DeleteButton); 
-  this.element.appendChild(new CompleteButton);
-  taskList.appendChild(this.element);
-}
-
 function validate(){
+  var name = task.value;
+  var dueDate = dueDates.options[dueDates.selectedIndex].value;
+  var status = "pending";
+
   if (!task.value){
     taskWarning.style.display = "block";
   }
   else{
     taskWarning.style.display = "none";
-    var newItem = new Task();
+    var newItem = new Task(name, dueDate, status);
     taskListBig.push(newItem.data);
+    console.dir(taskListBig);
+    updateLocal();
   }
 }
 
