@@ -38,8 +38,6 @@ DeleteButton.prototype.setEvents = function() {
     var nodeName = nodeTitle.innerHTML;
     
     // for (var i=0; i < taskListBig.length; i++) { //taskListBig not accessible from here, what to do?
-    //   if (taskListBig[i].name === nodeName){
-    //     console.log("hello");
     //     taskListBig.splice([i], 1);
     //   }
     // }
@@ -71,7 +69,6 @@ CompleteButton.prototype.setEvents = function() {
     node.setAttribute("class", "complete");
     // for (var i=0; i < taskListBig.length; i++) { //taskListBig not accessible from here
     //   if (taskListBig[i].name === nodeName){
-    //     console.log("hello");
     //     taskListBig[i].status = "complete";
     //   }
     // }
