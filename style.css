@@ -18,27 +18,36 @@ body{
 }
 
 li{
-	padding: 10px;
+	padding: 10px 10px 30px 10px;
 }
 
 li:nth-child(even){
 	background-color: #eee;
 }
 
+h3{
+	font-size: 18px;
+	margin: 5px;
+}
+
+p {
+	text-align:right;
+}
+
+p:before{
+	content: "Due Date: ";
+}
+
 .Average h3{
 	color: black;
-	font-size: 18px;
 }
 
 .High h3{
 	color: red;
-	font-weight: bold;
-	font-size: 18px;
 }
 
 .Low h3{
 	color: green;
-	font-size: 18px;
 }
 
 .due{
@@ -64,11 +73,14 @@ li:nth-child(even){
 	color: white;
 }
 
-.complete .completed{
+.complete .completed, .complete p{
 	display: none;
 }
 
 .delete{
-
+	float: left;
+	clear: left;
 }
+
+
 

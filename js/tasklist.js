@@ -1,11 +1,12 @@
 //creates task list
-(function() {
+(function(){
 
   function TaskList() {
     var submit = document.getElementById("submit"),
     task = document.getElementById("task");
     this.db = window.localStorage;
-    this.taskList = [];
+    this.taskList =[]; 
+    this.taskData =[]; //separate from list because JSON won't stringify dom elements
     this.createList();
     this.loadSavedTasks();
     this.attachEvents();
@@ -18,14 +19,15 @@
   };
 
   TaskList.prototype.loadSavedTasks = function() {
-    var taskListBigString = this.db.getItem("yourStoredTasks");
-    var taskParent = this;
-    if (taskListBigString) {
-      this.taskList = JSON.parse(taskListBigString);
-      for (var i=0; i < this.taskList.length; i++) {
-        var name = this.taskList[i].name;
-        var dueDate = this.taskList[i].dueDate;
-        var newItem = new TaskItem(taskParent, name, dueDate);
+    var taskDataString = this.db.getItem("yourStoredTasks"),
+    taskParent = this;
+    if (taskDataString) {
+      this.taskData = JSON.parse(taskDataString);
+      for (var i=0; i < this.taskData.length; i++) {
+        var name = this.taskData[i].name;
+        var dueDate = this.taskData[i].dueDate;
+        var status = this.taskData[i].status;
+        taskParent.activate(new TaskItem(taskParent, name, dueDate, status));
       }
     }
   };
@@ -46,8 +48,9 @@
     task = document.getElementById("task"),
     dueDates = document.getElementById("date"),
     taskName = document.getElementById("task").value,
-    dueDate = dueDates.options[dueDates.selectedIndex].value;
-    this.save(new TaskItem(taskParent, taskName, dueDate));
+    dueDate = dueDates.options[dueDates.selectedIndex].value,
+    status = "pending";
+    this.save(new TaskItem(taskParent, taskName, dueDate, status));
   };
 
   TaskList.prototype.attachEvents = function(){
@@ -58,7 +61,6 @@
         self.validate();
         task.value = null;
         task.focus(); 
-        self.setTaskEvents();
         return false;
       }
       else{
@@ -67,20 +69,31 @@
     }
   };
 
-  TaskList.prototype.setTaskEvents = function() {
-    var self = this;
-    console.dir(this.taskList);
-    // this.taskList.forEach(function(task) {
-    //   box.setClickCallback(function() {
-    //     box.toggle();
-    //     self.updateList(); //doesn' exist yet
-    //   });
-    // });
-  };
-
   TaskList.prototype.save = function(newTaskObject) {
     this.taskList.push(newTaskObject);
-    this.db.setItem("yourStoredTasks", JSON.stringify(this.taskList));
+    this.taskData.push(newTaskObject.data);
+    this.db.setItem("yourStoredTasks", JSON.stringify(this.taskData));
+    newTaskObject.deleteButton.addEventListener("click", this.deleteTask);
+    newTaskObject.completeButton.addEventListener("click", this.completeTask);
+  };
+
+  TaskList.prototype.activate = function(newTaskObject) {
+    var self = this;
+    this.taskList.push(newTaskObject);
+    newTaskObject.deleteButton.addEventListener("click", this.deleteTask);
+    newTaskObject.completeButton.addEventListener("click", this.completeTask);
+  };
+
+  TaskList.prototype.deleteTask = function() { //how to update taskList from here? I moved function here from maketasks
+    this.parentNode.remove();
+  };
+
+  TaskList.prototype.completeTask = function() {  //how to update taskList from here? I moved function here from maketasks
+    this.parentNode.classList.add("complete");
+  };
+
+  TaskList.prototype.updateList = function() { //*how to call from inside element so don't need to go through everything?
+
   };
 
   window.TaskList = TaskList; //I run task list 

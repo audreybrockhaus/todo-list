@@ -1,40 +1,37 @@
 //constructor functions
 (function() {
 
-  function TaskItem(taskParent, taskName, dueDate){
+  function TaskItem(taskParent, taskName, dueDate, status){
     this.data = {};
     this.data.name = taskName;
     this.data.dueDate = dueDate;
-    this.writeNewTask(taskParent, taskName, dueDate);
-    this.setButtons();
-    return this.data;
+    this.data.status = status;
+    this.writeNewTask(taskParent, taskName, dueDate, status);
+    return this;
   }
 
-  TaskItem.prototype.writeNewTask = function(taskParent, taskName, dueDate){
+  TaskItem.prototype.writeNewTask = function(taskParent, taskName, dueDate, status){
+    this.taskHeading = document.createElement("h3");
+    this.dueDisplay = document.createElement("p");
     this.deleteButton = document.createElement("button");
     this.completeButton = document.createElement("button");
     this.el = document.createElement("li");
-    this.el.innerHTML = taskName;
+    this.taskHeading.innerHTML = taskName;
+    this.el.appendChild(this.taskHeading);
+    this.dueDisplay.innerHTML = dueDate;
+    this.el.appendChild(this.dueDisplay);
     this.deleteButton.classList.add("delete");
     this.deleteButton.innerHTML = "delete";
     this.el.appendChild(this.deleteButton);
     this.completeButton.classList.add("completed");
     this.completeButton.innerHTML = "Completed?";
     this.el.appendChild(this.completeButton);
+
+    if (status != "pending"){
+        this.el.classList.add("complete");
+    }
+
     taskParent.el.appendChild(this.el);
-  }
-
-  TaskItem.prototype.setButtons = function() {
-    this.deleteButton.addEventListener("click", deleteMe);
-    this.completeButton.addEventListener("click", completeMe);
-  };
-
-  function deleteMe(){
-    this.parentNode.remove();
-  }
-
-  function completeMe(){
-    this.parentNode.classList.add("complete");
   }
 
  window.TaskItem = TaskItem; //I run task item 
