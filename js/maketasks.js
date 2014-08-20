@@ -7,6 +7,7 @@
     this.data.dueDate = dueDate;
     this.data.status = status;
     this.writeNewTask(taskParent, taskName, dueDate, status);
+    this.attachEvents();
     return this;
   }
 
@@ -32,6 +33,18 @@
     }
 
     taskParent.el.appendChild(this.el);
+  }
+
+  TaskItem.prototype.setOnDeleteCallback = function(callback) {
+    this.onDeleteCallback = callback;
+  }
+
+  TaskItem.prototype.attachEvents = function() {
+    var self = this;
+    this.deleteButton.addEventListener("click", function() {
+      self.el.remove();
+      self.onDeleteCallback();
+    });
   }
 
  window.TaskItem = TaskItem; //I run task item 

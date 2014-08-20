@@ -27,7 +27,10 @@
         var name = this.taskData[i].name;
         var dueDate = this.taskData[i].dueDate;
         var status = this.taskData[i].status;
-        taskParent.activate(new TaskItem(taskParent, name, dueDate, status));
+        var newTaskItem = new TaskItem(taskParent, name, dueDate, status);
+        taskParent.activate(newTaskItem);
+        this.setTaskObjectCallbacks(newTaskItem);
+
       }
     }
   };
@@ -50,11 +53,16 @@
     taskName = document.getElementById("task").value,
     dueDate = dueDates.options[dueDates.selectedIndex].value,
     status = "pending";
-    this.save(new TaskItem(taskParent, taskName, dueDate, status));
+
+    var newTaskItem = new TaskItem(taskParent, taskName, dueDate, status);
+    this.taskList.push(newTaskItem);
+    this.taskData.push(newTaskItem.data);
+    this.save(newTaskItem);
+    this.setTaskObjectCallbacks(newTaskItem);
   };
 
   TaskList.prototype.attachEvents = function(){
-    self = this; //thank you Naomi I did need this, never would have found it!
+    var self = this; //thank you Naomi I did need this, never would have found it!
     submit.addEventListener("click", function(){self.validate(); task.focus(); }, false);
     task.onkeydown = function(event){
       if(event.which == 13 || event.keyCode == 13){
@@ -69,22 +77,34 @@
     }
   };
 
-  TaskList.prototype.save = function(newTaskObject) {
-    this.taskList.push(newTaskObject);
-    this.taskData.push(newTaskObject.data);
-    this.db.setItem("yourStoredTasks", JSON.stringify(this.taskData));
-    newTaskObject.deleteButton.addEventListener("click", this.deleteTask);
-    newTaskObject.completeButton.addEventListener("click", this.completeTask);
+  TaskList.prototype.setTaskObjectCallbacks = function(newTaskObject) {
+
+    var self = this;
+    newTaskObject.setOnDeleteCallback(function() {
+      var index = self.taskList.indexOf(newTaskObject);
+      self.taskList.splice(index, 1);
+      self.save();
+    });
+  };
+
+
+  TaskList.prototype.save = function() {
+    var dataArray = [];
+    this.taskList.forEach(function(taskItem) {
+      dataArray.push(taskItem.data);
+    });
+    this.db.setItem("yourStoredTasks", JSON.stringify(dataArray));
   };
 
   TaskList.prototype.activate = function(newTaskObject) {
     var self = this;
     this.taskList.push(newTaskObject);
-    newTaskObject.deleteButton.addEventListener("click", this.deleteTask);
-    newTaskObject.completeButton.addEventListener("click", this.completeTask);
+//    newTaskObject.deleteButton.addEventListener("click", this.deleteTask.bind(this, newTaskObject /* , more, items */));
+//    newTaskObject.completeButton.addEventListener("click", this.completeTask);
   };
 
-  TaskList.prototype.deleteTask = function() { //how to update taskList from here? I moved function here from maketasks
+  TaskList.prototype.deleteTask = function(newTaskObject) { //how to update taskList from here? I moved function here from maketasks
+    console.log(newTaskObject)
     this.parentNode.remove();
   };
 
