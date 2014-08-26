@@ -69,11 +69,20 @@ p:before{
 
 
 .complete{
-	background-color: #0066FF !important;
-	color: white;
+	background-color: #bbbbbb !important;
+	color: #555555;
 }
 
-.complete .completed, .complete p{
+.complete h3{
+	color: #555555;
+}
+
+.complete p{
+	color: #555555;
+	font-style: italic;
+}
+
+.complete .completed{
 	display: none;
 }
 

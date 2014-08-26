@@ -3,10 +3,12 @@
 
   function TaskList() {
     var submit = document.getElementById("submit"),
+    deleteAll = document.getElementById("deleteAll"),
     task = document.getElementById("task");
+    this.dueDates = document.getElementById("date"); //for some reason this returns undefined in other functions without "this" while task is just fine without it
     this.db = window.localStorage;
-    this.taskList =[]; 
-    this.taskData =[]; //separate from list because JSON won't stringify dom elements
+    this.taskDataString = this.db.getItem("yourStoredTasks");
+    this.taskList =[];
     this.createList();
     this.loadSavedTasks();
     this.attachEvents();
@@ -19,15 +21,17 @@
   };
 
   TaskList.prototype.loadSavedTasks = function() {
-    var taskDataString = this.db.getItem("yourStoredTasks"),
-    taskParent = this;
-    if (taskDataString) {
-      this.taskData = JSON.parse(taskDataString);
-      for (var i=0; i < this.taskData.length; i++) {
-        var name = this.taskData[i].name;
-        var dueDate = this.taskData[i].dueDate;
-        var status = this.taskData[i].status;
-        taskParent.activate(new TaskItem(taskParent, name, dueDate, status));
+    var taskParent = this;
+    if (taskParent.taskDataString) {
+      var taskData = JSON.parse(taskParent.taskDataString);
+      for (var i=0; i < taskData.length; i++) {
+        var name = taskData[i].name;
+        var dueDate = taskData[i].dueDate;
+        var priority = taskData[i].priority;
+        var status = taskData[i].status;
+        var newTaskItem = new TaskItem(taskParent, name, priority, dueDate, status);
+        taskParent.activate(newTaskItem);
+        this.setTaskObjectCallbacks(newTaskItem);
       }
     }
   };
@@ -45,16 +49,18 @@
 
   TaskList.prototype.requestNewTask= function(){
     var taskParent = this,
-    task = document.getElementById("task"),
-    dueDates = document.getElementById("date"),
-    taskName = document.getElementById("task").value,
-    dueDate = dueDates.options[dueDates.selectedIndex].value,
+    taskName = task.value,
+    dueDate = this.dueDates.options[this.dueDates.selectedIndex].value,
+    priority = document.querySelector('input[name = "priority"]:checked').value,
     status = "pending";
-    this.save(new TaskItem(taskParent, taskName, dueDate, status));
+    var newTaskItem = new TaskItem(taskParent, taskName, priority, dueDate, status);
+    taskParent.activate(newTaskItem);
+    this.save(newTaskItem);
+    this.setTaskObjectCallbacks(newTaskItem);
   };
 
   TaskList.prototype.attachEvents = function(){
-    self = this; //thank you Naomi I did need this, never would have found it!
+    self = this; 
     submit.addEventListener("click", function(){self.validate(); task.focus(); }, false);
     task.onkeydown = function(event){
       if(event.which == 13 || event.keyCode == 13){
@@ -66,36 +72,37 @@
       else{
         return true;
       }
-    }
+    };
+    deleteAll.addEventListener("click", function(){self.db.setItem("yourStoredTasks", []); self.el.innerHTML = "";}, false);
   };
 
-  TaskList.prototype.save = function(newTaskObject) {
-    this.taskList.push(newTaskObject);
-    this.taskData.push(newTaskObject.data);
-    this.db.setItem("yourStoredTasks", JSON.stringify(this.taskData));
-    newTaskObject.deleteButton.addEventListener("click", this.deleteTask);
-    newTaskObject.completeButton.addEventListener("click", this.completeTask);
+  TaskList.prototype.save = function() {
+    var dataArray = [];
+    this.taskList.forEach(function(taskItem) {
+      dataArray.push(taskItem.data);
+    });
+    this.db.setItem("yourStoredTasks", JSON.stringify(dataArray));
   };
 
   TaskList.prototype.activate = function(newTaskObject) {
-    var self = this;
     this.taskList.push(newTaskObject);
-    newTaskObject.deleteButton.addEventListener("click", this.deleteTask);
-    newTaskObject.completeButton.addEventListener("click", this.completeTask);
   };
 
-  TaskList.prototype.deleteTask = function() { //how to update taskList from here? I moved function here from maketasks
-    this.parentNode.remove();
+  TaskList.prototype.setTaskObjectCallbacks = function(newTaskObject) {
+    var self = this;
+    newTaskObject.setOnDeleteCallback(function() {
+      var index = self.taskList.indexOf(newTaskObject);
+      self.taskList.splice(index, 1);
+      self.save();
+    });
+
+    newTaskObject.setOnCompleteCallback(function() {
+      var index = self.taskList.indexOf(newTaskObject);
+      self.taskList[index].data.status = "complete";
+      self.save();
+    });
   };
 
-  TaskList.prototype.completeTask = function() {  //how to update taskList from here? I moved function here from maketasks
-    this.parentNode.classList.add("complete");
-  };
-
-  TaskList.prototype.updateList = function() { //*how to call from inside element so don't need to go through everything?
-
-  };
-
-  window.TaskList = TaskList; //I run task list 
+  window.TaskList = TaskList;
 
 })();
