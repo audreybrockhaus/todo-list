@@ -10,7 +10,15 @@ body{
 	margin: 0;
 }
 
-#taskUl{
+#pendingDiv, #completedDiv{
+	background-color: #334C80;
+	float: left;
+	margin: 10px;
+	padding: 10px;
+}
+
+
+#taskUl, #completedUl{
 	background-color: #fff;
 	padding: 5px;
 	width: 500px;
@@ -63,19 +71,10 @@ p:before{
 }
 
 
-.completed{
+.completed, .pendingButton{
 	float: right;
 }
 
-
-.complete{
-	background-color: #bbbbbb !important;
-	color: #555555;
-}
-
-.complete h3{
-	color: #555555;
-}
 
 .complete p{
 	color: #555555;
@@ -86,10 +85,15 @@ p:before{
 	display: none;
 }
 
+.pending .pendingButton{
+	display: none;
+}
+
 .delete{
 	float: left;
 	clear: left;
 }
+
 
 
 
