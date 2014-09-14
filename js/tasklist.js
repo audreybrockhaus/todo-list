@@ -2,9 +2,6 @@
 (function(){
 
   function TaskList() {
-    var submit = document.getElementById("submit"),
-    deleteAll = document.getElementById("deleteAll"),
-    task = document.getElementById("task");
     this.dueDates = document.getElementById("date");
     this.db = window.localStorage;
     this.taskDataString = this.db.getItem("yourStoredTasks");
@@ -91,8 +88,8 @@
 
   TaskList.prototype.attachEvents = function(){
     self = this; 
-    submit.addEventListener("click", function(){self.validate(); task.focus(); }, false);
-    task.addEventListener("keydown", function(event){
+    $("#submit").on("click", function(){self.validate(); task.focus(); });
+    $("#task").on("keydown", function(event){
       if(event.which == 13 || event.keyCode == 13){
         self.validate();
         task.value = null;
@@ -103,7 +100,7 @@
         return true;
       }
     });
-    deleteAll.addEventListener("click", function(){self.db.setItem("yourStoredTasks", []); self.taskUl.innerHTML = ""; self.completedUl.innerHTML = "";});
+    $("#deleteAll").on("click", function(){self.db.setItem("yourStoredTasks", []); self.taskUl.innerHTML = ""; self.completedUl.innerHTML = "";});
   };
 
   TaskList.prototype.save = function() {
