@@ -9,7 +9,7 @@
     this.data.dueDate = dueDate;
     this.data.status = status;
     this.writeNewTask(taskName, priority, dueDate, status);
-    this.attachEvents();
+    this.attachFunctionality();
     return this;
   }
 
@@ -36,31 +36,18 @@
     this.el.appendChild(this.pendingButton);
   };
 
-  TaskItem.prototype.setOnDeleteCallback = function(callback) {
-    this.onDeleteCallback = callback;
-  };
+  TaskItem.prototype.attachFunctionality = function(){ 
 
-  TaskItem.prototype.setOnCompleteCallback = function(callback) {
-    this.onCompleteCallback = callback;
-  };
-
-  TaskItem.prototype.setOnPendingCallback = function(callback) {
-    this.onPendingCallback = callback;
-  };
-
-  TaskItem.prototype.attachEvents = function() {
-    var self = this;
-    self.deleteButton.addEventListener("click", function() {
-      self.el.remove();
-      self.onDeleteCallback();
+    $( this ).on( "deleteMe", function( e ) {
+        $( this.el ).remove();
     });
 
-    self.completeButton.addEventListener("click", function() {
-      self.onCompleteCallback();
+    $( this ).on( "completeMe", function( e ) {
+        this.data.status = "complete";
     });
 
-    self.pendingButton.addEventListener("click", function() {
-      self.onPendingCallback();
+    $( this ).on( "startMe", function( e ) {
+        this.data.status = "pending";
     });
   };
 

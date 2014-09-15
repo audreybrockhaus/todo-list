@@ -140,22 +140,21 @@
 
   TaskList.prototype.setTaskObjectCallbacks = function(newTaskObject) {
     var self = this;
-    newTaskObject.setOnDeleteCallback(function() {
+    $( newTaskObject.deleteButton ).click(function() {
+      $( newTaskObject ).trigger( "deleteMe" );
       var index = self.taskList.indexOf(newTaskObject);
       self.taskList.splice(index, 1);
       self.save();
     });
 
-    newTaskObject.setOnCompleteCallback(function() {
-      var index = self.taskList.indexOf(newTaskObject);
-      self.taskList[index].data.status = "complete";
+    $( newTaskObject.completeButton ).click(function() {
+      $( newTaskObject ).trigger( "completeMe" );
       self.save();
       self.renderList();
     });
 
-    newTaskObject.setOnPendingCallback(function() {
-      var index = self.taskList.indexOf(newTaskObject);
-      self.taskList[index].data.status = "pending";
+    $( newTaskObject.pendingButton ).click(function() {
+      $( newTaskObject ).trigger( "startMe" );
       self.save();
       self.renderList();
     });
