@@ -3,13 +3,43 @@
 
   function TaskList() {
     this.dueDates = document.getElementById("date");
-    this.db = window.localStorage;
-    this.taskDataString = this.db.getItem("yourStoredTasks");
-    this.taskList =[];
+    this.listRef = myFirebaseRef.snapshot.val();
     this.createLists();
-    this.loadSavedTasks();
     this.attachEvents();
+    console.dir(this.listRef);
+    // this.loadSavedTasks();
   }
+
+
+  // myFirebaseRef.on("value", function(snapshot) {
+  //   var currentList = snapshot.val();
+  //   console.log(currentList.length);
+
+  // }, function (errorObject) {
+  //   console.log("The read failed: " + errorObject.code);
+  // });
+
+  // myFirebaseRef.on("value", function(snapshot) {
+  //   var currentList = snapshot.val();
+  //   currentList.forEach(function(item) {
+  //     var newTaskItem = new TaskItem(this.name, this.priority, this.dueIndex, this.dueDate, this.status, item);
+  //     // self.setTaskObjectCallbacks(newTaskItem);
+  //     // self.renderList(newTaskItem);
+  //   });
+
+  // }, function (errorObject) {
+  //   console.log("The read failed: " + errorObject.code);
+  // });
+
+  // TaskList.prototype.loadSavedTasks = function(){
+  //   var self = this;
+  //   console.log(self.listRef);
+  //   // self.listRef.forEach(function(item) {
+  //   //   var newTaskItem = new TaskItem(this.name, this.priority, this.dueIndex, this.dueDate, this.status, item);
+  //   //   self.setTaskObjectCallbacks(newTaskItem);
+  //   //   self.renderList(newTaskItem);
+  //   // });
+  // };
 
   TaskList.prototype.createLists = function(){
     var pendingHeading = document.createElement("h3"),
@@ -44,24 +74,6 @@
     document.body.appendChild(this.completedList);
   };
 
-  TaskList.prototype.loadSavedTasks = function() {
-    var self = this;
-    if (self.taskDataString) {
-      var taskData = JSON.parse(self.taskDataString);
-      for (var i=0; i < taskData.length; i++) {
-        var name = taskData[i].name;
-        var dueIndex = taskData[i].dueIndex;
-        var dueDate = taskData[i].dueDate;
-        var priority = taskData[i].priority;
-        var status = taskData[i].status;
-        var newTaskItem = new TaskItem(name, priority, dueIndex, dueDate, status);
-        this.activate(newTaskItem);
-        this.setTaskObjectCallbacks(newTaskItem);
-        this.renderList();
-      }
-    }
-  };
-
   TaskList.prototype.validate = function() {
     self = this; 
     if (!task.value){
@@ -80,10 +92,9 @@
     priority = document.querySelector('input[name = "priority"]:checked').value,
     status = "pending";
     var newTaskItem = new TaskItem(taskName, priority, dueIndex, dueDate, status);
-    this.activate(newTaskItem);
-    this.save(newTaskItem);
     this.setTaskObjectCallbacks(newTaskItem);
-    this.renderList();
+    this.renderList(newTaskItem);
+    this.listRef.push(newTaskItem.data);
   };
 
   TaskList.prototype.attachEvents = function(){
@@ -100,32 +111,23 @@
         return true;
       }
     });
-    $("#deleteAll").on("click", function(){self.db.setItem("yourStoredTasks", []); self.taskUl.innerHTML = ""; self.completedUl.innerHTML = "";});
+    $("#deleteAll").on("click", function(){self.listRef.remove(); self.taskUl.innerHTML = ""; self.completedUl.innerHTML = "";});
   };
 
-  TaskList.prototype.save = function() {
-    var dataArray = [];
-    this.taskList.forEach(function(taskItem) {
-      dataArray.push(taskItem.data);
-    });
-    this.db.setItem("yourStoredTasks", JSON.stringify(dataArray));
-  };
 
-  TaskList.prototype.renderList = function() {
+
+  TaskList.prototype.renderList = function(taskItem) {
     var self = this;
-    this.taskList.sort(this.sortByDate);
-    self.taskList.forEach(function(taskItem) {
-      if(taskItem.data.status == "pending"){
-        taskItem.el.classList.remove("complete");
-        taskItem.el.classList.add("pending");
-        self.taskUl.appendChild(taskItem.el);
-      }
-      else{
-        taskItem.el.classList.remove("pending");
-        taskItem.el.classList.add("complete");
-        self.completedUl.appendChild(taskItem.el);
-      }
-    });
+    if(taskItem.data.status == "pending"){
+      taskItem.el.classList.remove("complete");
+      taskItem.el.classList.add("pending");
+      self.taskUl.appendChild(taskItem.el);
+    }
+    else{
+      taskItem.el.classList.remove("pending");
+      taskItem.el.classList.add("complete");
+      self.completedUl.appendChild(taskItem.el);
+    }
   };
 
   TaskList.prototype.sortByDate = function(a, b) {
@@ -134,28 +136,23 @@
     return ((aIndex < bIndex) ? -1 : ((aIndex > bIndex) ? 1 : 0));
   };
 
-  TaskList.prototype.activate = function(newTaskObject) {
-    this.taskList.push(newTaskObject);
-  };
-
   TaskList.prototype.setTaskObjectCallbacks = function(newTaskObject) {
     var self = this;
-    $( newTaskObject.deleteButton ).click(function() {
-      $( newTaskObject ).trigger( "deleteMe" );
-      var index = self.taskList.indexOf(newTaskObject);
-      self.taskList.splice(index, 1);
-      self.save();
+
+    $( newTaskObject ).on("deleteMe", function() {
+      var myID = newTaskObject.item;
+      self.listRef.child(myID).remove();
     });
 
     $( newTaskObject.completeButton ).click(function() {
       $( newTaskObject ).trigger( "completeMe" );
-      self.save();
+      //something here to update firebase
       self.renderList();
     });
 
     $( newTaskObject.pendingButton ).click(function() {
       $( newTaskObject ).trigger( "startMe" );
-      self.save();
+        //something here to update firebase
       self.renderList();
     });
   };

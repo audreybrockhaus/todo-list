@@ -1,13 +1,14 @@
 //construct tasks
 (function() {
 
-  function TaskItem(taskName, priority, dueIndex, dueDate, status){
+  function TaskItem(taskName, priority, dueIndex, dueDate, status, item){
     this.data = {};
     this.data.name = taskName;
     this.data.priority = priority;
     this.data.dueIndex = Number(dueIndex);
     this.data.dueDate = dueDate;
     this.data.status = status;
+    this.item = item;
     this.writeNewTask(taskName, priority, dueDate, status);
     this.attachFunctionality();
     return this;
@@ -37,6 +38,12 @@
   };
 
   TaskItem.prototype.attachFunctionality = function(){ 
+
+    var self = this;
+
+    $ ( self.deleteButton ).click(function(){
+        $(self).trigger("deleteMe");
+    }); 
 
     $( this ).on( "deleteMe", function( e ) {
         $( this.el ).remove();

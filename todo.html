@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <title>To-Do List</title>
   <link rel="stylesheet" href="style.css">
+	<script src="https://cdn.firebase.com/js/client/1.0.24/firebase.js"></script>
 </head>
 
 <body>
@@ -30,9 +31,11 @@
 	</form>
 
 	<input type="button" value="Delete Task List" id="deleteAll">
+
+	<script>var myFirebaseRef = new Firebase("https://brilliant-inferno-3720.firebaseio.com/to-do/tasks");</script>
 	<script src="js/jquery-1.11.1.js"></script>
 	<script src="js/maketasks2.js"></script>	
-  <script src="js/tasklist2.js"></script>	
+  <script src="js/tasklist4.js"></script>	
   <script src="js/main.js"></script>
 </body>
 </html>
